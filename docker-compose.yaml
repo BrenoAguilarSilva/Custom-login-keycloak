@@ -1,0 +1,35 @@
+networks:
+  quarkus:
+    driver: bridge
+
+services:
+  keycloak:
+    # Keycloak para autenticação
+    image: quay.io/keycloak/keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_LOG_LEVEL: info
+    command:
+      - start-dev
+      - --import-realm
+      #- --http-port=8181
+      - --hostname-port=8181
+    volumes:
+      - ./imports/keywind-black.jar:/opt/keycloak/providers/keywind-black.jar
+    ports:
+      - "8181:8080"
+    networks:
+      - quarkus
+
+  postgres:
+    # PostgreSQL da aplicação
+    image: postgres
+    environment:
+      POSTGRES_DB: quarkus
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    ports:
+      - 5432:5432
+    networks:
+      - quarkus
